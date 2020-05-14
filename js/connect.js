@@ -92,12 +92,16 @@ XPaymentsConnect.prototype.load = function()
     elm.setAttribute('scrolling', 'no')
     containerElm.appendChild(elm);
 
-    elm.src =
-        'https://' + this.getServerHost() + '/' +
-        '?ref=' + encodeURIComponent(this.config.referrerUrl) +
-        '&account=' + encodeURIComponent(this.config.account) +
-        '&quickaccess=' + encodeURIComponent(this.config.quickAccessKey);
+    elm.src = this.getRedirectUrl();
 
+}
+
+XPaymentsConnect.prototype.getRedirectUrl = function()
+{
+    return 'https://' + this.getServerHost() + '/' +
+    '?ref=' + encodeURIComponent(this.config.referrerUrl) +
+    '&account=' + encodeURIComponent(this.config.account) +
+    '&quickaccess=' + encodeURIComponent(this.config.quickAccessKey);
 }
 
 XPaymentsConnect.prototype.on = function(event, handler)
