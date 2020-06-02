@@ -20,6 +20,7 @@ function XPaymentsWidget()
         form: '',
         language: '',
         customerId: '',
+        tokenName: 'xpaymentsToken',
         showSaveCard: true,
         enableWallets: true,
         company: {
@@ -102,11 +103,14 @@ XPaymentsWidget.prototype.init = function(settings)
   }).on('success', function(params) {
       var formElm = this.getFormElm();
       if (formElm) {
-          var input = document.createElement('input');
-          input.type = 'hidden';
-          input.name = 'xpaymentsToken';
+          var input = document.getElementById(this.config.tokenName);
+          if (!input) {
+              input = document.createElement('input');
+              input.type = 'hidden';
+              input.name = input.id = this.config.tokenName;
+              formElm.appendChild(input);
+          }
           input.value = params.token;
-          formElm.appendChild(input);
           formElm.submit();
       }
   }).on('alert', function(params) {
