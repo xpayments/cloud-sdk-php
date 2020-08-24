@@ -14,6 +14,7 @@ function XPaymentsConnect(elmSelector, quickAccessKey, handlers) {
         container: '',
         topElement: '',
         referrerUrl: document.location.href,
+        applePayOnly: false,
         quickAccessKey: ''
     }
 
@@ -99,9 +100,10 @@ XPaymentsConnect.prototype.load = function()
 XPaymentsConnect.prototype.getRedirectUrl = function()
 {
     return 'https://' + this.getServerHost() + '/' +
-    '?ref=' + encodeURIComponent(this.config.referrerUrl) +
-    '&account=' + encodeURIComponent(this.config.account) +
-    '&quickaccess=' + encodeURIComponent(this.config.quickAccessKey);
+        '?ref=' + encodeURIComponent(this.config.referrerUrl) +
+        '&account=' + encodeURIComponent(this.config.account) +
+        '&apple_pay=' + (this.config.applePayOnly ? 'Y' : 'N') +
+        '&quickaccess=' + encodeURIComponent(this.config.quickAccessKey);
 }
 
 XPaymentsConnect.prototype.on = function(event, handler)

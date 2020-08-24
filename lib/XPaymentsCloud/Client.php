@@ -16,7 +16,7 @@ require_once __DIR__ . DIRECTORY_SEPARATOR . 'Model' . DIRECTORY_SEPARATOR . 'Pa
 
 class Client
 {
-    const SDK_VERSION = '0.2.4';
+    const SDK_VERSION = '0.2.5';
 
     private $account;
     private $secretKey;
