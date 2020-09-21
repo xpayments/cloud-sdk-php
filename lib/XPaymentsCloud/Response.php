@@ -10,6 +10,19 @@ namespace XPaymentsCloud;
 
 class Response
 {
+    /**
+     * Transaction status codes
+     * (see Payment Transaction model in X-Payments)
+     * NOTE: WARN and PENDING are also success statuses!
+     */
+    const UNKNOWN_STATUS    = 0;
+    const SUCCESS_STATUS    = 1;
+    const DECLINED_STATUS   = 2;
+    const ERROR_STATUS      = 3;
+    const WARN_STATUS       = 4;
+    const PENDING_STATUS    = 5;
+    const INPROGRESS_STATUS = 6;
+
     private $fields;
     private $payment = null;
 
@@ -85,5 +98,23 @@ class Response
     public function getPayment()
     {
         return $this->payment;
+    }
+
+    /**
+     * Check successful transaction status
+     *
+     * @return bool
+     */
+    public function isSuccessTransactionStatus()
+    {
+        return !is_null($this->result)
+            && in_array(
+                $this->result,
+                array(
+                    self::SUCCESS_STATUS,
+                    self::WARN_STATUS,
+                    self::PENDING_STATUS,
+                )
+            );
     }
 }
