@@ -56,11 +56,15 @@ function XPaymentsWidget()
 
 }
 
-XPaymentsWidget.prototype.on = function(event, handler)
+XPaymentsWidget.prototype.on = function(event, handler, context)
 {
+    if ('undefined' === typeof context) {
+        context = this;
+    }
+
     if ('formSubmit' !== event) {
 
-        this.handlers[event] = handler.bind(this);
+        this.handlers[event] = handler.bind(context);
 
     } else {
         var formElm = this.getFormElm();
@@ -69,7 +73,7 @@ XPaymentsWidget.prototype.on = function(event, handler)
             if (this.bindedSubmit) {
                 formElm.removeEventListener('submit', this.bindedSubmit);
             }
-            this.bindedSubmit = handler.bind(this);
+            this.bindedSubmit = handler.bind(context);
             formElm.addEventListener('submit', this.bindedSubmit);
         }
     }
@@ -432,8 +436,11 @@ XPaymentsWidget.prototype.setOrder = function(total, currency)
 {
     if ('undefined' !== typeof total) {
         this.config.order.total = total;
+    }
+    if ('undefined' !== typeof currency) {
         this.config.order.currency = currency;
     }
+
     this._sendEvent('details', {
         tokenizeCard: this.config.order.tokenizeCard,
         total: this.config.order.total,
@@ -476,7 +483,8 @@ XPaymentsWidget.prototype.messageListener = function(event)
         if (
             msg &&
             msg.event &&
-            0 === msg.event.indexOf(this.messageNamespace)
+            0 === msg.event.indexOf(this.messageNamespace) &&
+            (!msg.widgetId || msg.widgetId === this.widgetId)
         ) {
             this._log('Received from X-Payments: ' + msg.event);
 
