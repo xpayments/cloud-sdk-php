@@ -8,11 +8,14 @@
 
 namespace XPaymentsCloud;
 
+use XPaymentsCloud\Model\Subscription;
+
 require_once __DIR__ . DIRECTORY_SEPARATOR . 'Request.php';
 require_once __DIR__ . DIRECTORY_SEPARATOR . 'Response.php';
 require_once __DIR__ . DIRECTORY_SEPARATOR . 'ApiException.php';
 require_once __DIR__ . DIRECTORY_SEPARATOR . 'Signature.php';
 require_once __DIR__ . DIRECTORY_SEPARATOR . 'Model' . DIRECTORY_SEPARATOR . 'Payment.php';
+require_once __DIR__ . DIRECTORY_SEPARATOR . 'Model' . DIRECTORY_SEPARATOR . 'Subscription.php';
 
 class Client
 {
@@ -379,6 +382,61 @@ class Client
     }
 
     /**
+     * Update subscription
+     *
+     * @param string  $subscriptionPublicId
+     * @param array  $updateParams
+     *
+     * @return Response
+     *
+     * @throws ApiException
+     */
+    public function doUpdateSubscription(string $subscriptionPublicId, array $updateParams)
+    {
+        $request = new Request($this->account, $this->apiKey, $this->secretKey);
+
+        $params = ['public_id' => $subscriptionPublicId] + $updateParams;
+
+        $response = $request->send(
+            'update_subscription',
+            $params,
+            'subscription'
+        );
+
+        if (is_null($response->result)) {
+            throw new ApiException('Invalid response');
+        }
+
+        return $response;
+    }
+
+    /**
+     * Get subscriptions settings
+     *
+     * @return Response
+     *
+     * @throws ApiException
+     */
+    public function doGetSubscriptionsSettings()
+    {
+        $request = new Request($this->account, $this->apiKey, $this->secretKey);
+
+        $params = [];
+
+        $response = $request->send(
+            'get_settings',
+            $params,
+            'subscription'
+        );
+
+        if (is_null($response)) {
+            throw new ApiException('Invalid response');
+        }
+
+        return $response;
+    }
+
+    /**
      * @param null $inputData
      * @param null $signature
      *
@@ -398,7 +456,10 @@ class Client
 
         $response = new Response('callback', $inputData, null, $signature, $this->secretKey);
 
-        if (empty($response->getPayment())) {
+        if (
+            empty($response->getPayment())
+            && !$response->getSubscription()
+        ) {
             throw new ApiException('Invalid response');
         }
 

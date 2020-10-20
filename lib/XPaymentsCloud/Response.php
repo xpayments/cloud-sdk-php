@@ -8,6 +8,8 @@
 
 namespace XPaymentsCloud;
 
+use XPaymentsCloud\Model\Subscription;
+
 class Response
 {
     /**
@@ -23,6 +25,8 @@ class Response
 
     private $fields;
     private $payment = null;
+    private $subscription = null;
+    private $subscriptions = [];
 
     /**
      * Response constructor.
@@ -66,6 +70,22 @@ class Response
             $this->payment = new \XPaymentsCloud\Model\Payment($fields['payment']);
             unset($fields['payment']);
         }
+
+        if (!empty($fields['subscription'])) {
+            $this->subscription = new Subscription($fields['subscription']);
+            unset($fields['subscription']);
+        }
+
+        if (
+            !empty($fields['subscriptions'])
+            && is_array($fields['subscriptions'])
+        ) {
+            foreach ($fields['subscriptions'] as $subscription) {
+                $this->subscriptions[] = new Subscription($subscription);
+            }
+            unset($fields['subscriptions']);
+        }
+
         $this->fields = $fields;
     }
 
@@ -115,4 +135,21 @@ class Response
                 )
             );
     }
+
+    /**
+     * @return Subscription[]
+     */
+    public function getSubscriptions()
+    {
+        return $this->subscriptions;
+    }
+
+    /**
+     * @return Subscription
+     */
+    public function getSubscription()
+    {
+        return $this->subscription;
+    }
+
 }
