@@ -19,7 +19,7 @@ require_once __DIR__ . DIRECTORY_SEPARATOR . 'Model' . DIRECTORY_SEPARATOR . 'Su
 
 class Client
 {
-    const SDK_VERSION = '0.2.7';
+    const SDK_VERSION = '0.2.8';
 
     private $account;
     private $secretKey;
@@ -307,7 +307,7 @@ class Client
         $response = $request->send(
             'get_tokenization_settings',
             $params,
-            'customer'
+            'config'
         );
 
         if (is_null($response->tokenizationEnabled)) {
@@ -372,6 +372,114 @@ class Client
             'delete_card',
             $params,
             'customer'
+        );
+
+        if (is_null($response->result)) {
+            throw new ApiException('Invalid response');
+        }
+
+        return $response;
+    }
+
+    /**
+     * Get payment configurations 
+     *
+     * @return Response
+     * @throws ApiException
+     */
+    public function doGetPaymentConfs()
+    {
+        $request = new Request($this->account, $this->apiKey, $this->secretKey);
+
+        $params = array();
+
+        $response = $request->send(
+            'get_payment_configurations',
+            $params,
+            'config'
+        );
+
+        if (is_null($response->paymentModule)) {
+            throw new ApiException('Invalid response');
+        }
+
+        return $response;
+    }
+
+    /**
+     * Get wallets 
+     *
+     * @return Response
+     * @throws ApiException
+     */
+    public function doGetWallets()
+    {
+        $request = new Request($this->account, $this->apiKey, $this->secretKey);
+
+        $params = array();
+
+        $response = $request->send(
+            'get_wallets',
+            $params,
+            'config'
+        );
+
+        if (is_null($response->result)) {
+            throw new ApiException('Invalid response');
+        }
+
+        return $response;
+    }
+
+    /**
+     * Change Apple Pay status
+     *
+     * @param bool $status
+     *
+     * @return Response
+     * @throws ApiException
+     */
+    public function doSetApplePayStatus($status)
+    {
+        $request = new Request($this->account, $this->apiKey, $this->secretKey);
+
+        $params = array(
+            'status' => $status
+        );
+
+        $response = $request->send(
+            'set_apple_pay_status',
+            $params,
+            'config'
+        );
+
+        if (is_null($response->result)) {
+            throw new ApiException('Invalid response');
+        }
+
+        return $response;
+    }
+
+    /**
+     * Verify Apple Pay domain
+     *
+     * @param bool $status
+     *
+     * @return Response
+     * @throws ApiException
+     */
+    public function doVerifyApplePayDomain($domain)
+    {
+        $request = new Request($this->account, $this->apiKey, $this->secretKey);
+
+        $params = array(
+            'domain' => $domain
+        );
+
+        $response = $request->send(
+            'verify_apple_pay_domain',
+            $params,
+            'config'
         );
 
         if (is_null($response->result)) {
