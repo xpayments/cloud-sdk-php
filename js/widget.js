@@ -371,12 +371,21 @@ XPaymentsWidget.prototype._applePayStart = function(params)
 
 }
 
+XPaymentsWidget.prototype._parseApplePayNewTotal = function(updateData)
+{
+    this.setOrder(updateData.newTotal.amount);
+    if ('undefined' != typeof updateData.newTotal && 'undefined' == typeof updateData.newTotal.label) {
+        updateData.newTotal.label = this.config.company.name;
+    }
+    return updateData;
+}
+
 XPaymentsWidget.prototype.completeApplePayShippingContactSelection = function(updateData) {
-    this.applePaySession.completeShippingContactSelection(updateData);
+    this.applePaySession.completeShippingContactSelection(this._parseApplePayNewTotal(updateData));
 }
 
 XPaymentsWidget.prototype.completeApplePayShippingMethodSelection = function(updateData) {
-    this.applePaySession.completeShippingMethodSelection(updateData);
+    this.applePaySession.completeShippingMethodSelection(this._parseApplePayNewTotal(updateData));
 }
 
 XPaymentsWidget.prototype.completeApplePayPayment = function(updateData) {

@@ -178,8 +178,7 @@ XPaymentsConnect.prototype.postMessage = function(message)
     }
 }
 
-XPaymentsConnect.prototype.log = function(msg)
-{
+XPaymentsConnect.prototype.log = function(msg) {
     if (this.config.debug) {
         console.log(msg);
     }
