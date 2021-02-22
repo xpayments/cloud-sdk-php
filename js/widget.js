@@ -116,8 +116,10 @@ XPaymentsWidget.prototype.init = function(settings)
   // Set default handlers
   this.on('formSubmit', function (domEvent) {
       // "this" here is the widget
-      this.submit();
-      domEvent.preventDefault();
+      if (this.isValid()) {
+          this.submit();
+          domEvent.preventDefault();
+      }
   })
   .on('success', this._defaultSuccessHandler)
   .on('applepay.paymentauthorized', this._applePayAuthorized)
