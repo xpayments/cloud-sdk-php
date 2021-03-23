@@ -2,7 +2,7 @@
  * X-Payments Cloud SDK - Payment Widget
  */
 
-function XPaymentsWidget()
+window.XPaymentsWidget = function()
 {
     this.serverDomain = 'xpayments.com';
     this.messageNamespace = 'xpayments.widget.';
