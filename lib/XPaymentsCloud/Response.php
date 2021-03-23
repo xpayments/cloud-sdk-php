@@ -23,6 +23,13 @@ class Response
     const PENDING_STATUS    = 5;
     const INPROGRESS_STATUS = 6;
 
+    /**
+     * Result codes
+     */
+    const RESULT_FAIL     = 0;
+    const RESULT_SUCCESS  = 1;
+    const RESULT_REDIRECT = 2;
+
     private $fields;
     private $payment = null;
     private $subscription = null;
