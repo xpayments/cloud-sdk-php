@@ -9,7 +9,12 @@ window.XPaymentsWidget = function()
     this.receiverNamespace = 'xpayments.checkout.';
     this.widgetId = this.generateId();
     this.previousHeight = -1;
-    this.applePaySession = null;
+    this.applePay = {
+        session: null,
+        supportedNetworks: [],
+        merchantCapabilities: [],
+        merchantId: '',
+    };
     this.paymentMethod = null;
 
     this.config = {
@@ -47,7 +52,7 @@ window.XPaymentsWidget = function()
             total: -1,
             currency: ''
         }
-    }
+    };
 
     this.handlers = {};
 
@@ -248,7 +253,8 @@ XPaymentsWidget.prototype.submit = function()
 XPaymentsWidget.prototype.beginCheckoutWithApplePay = function()
 {
     if (this._isApplePayAvailable()) {
-        this._sendEvent('applepay.begincheckout');
+        this.trigger('applepay.start');
+        this._applePayStart();
     }
 }
 
@@ -292,7 +298,7 @@ XPaymentsWidget.prototype._paymentMethodChange = function(params)
 XPaymentsWidget.prototype._applePayValidated = function(params)
 {
     try {
-        this.applePaySession.completeMerchantValidation(params.data);
+        this.applePay.session.completeMerchantValidation(params.data);
     } catch (e) {
     }
 }
@@ -310,19 +316,19 @@ XPaymentsWidget.prototype._applePayCompleted = function(params)
 XPaymentsWidget.prototype._applePayError = function(params)
 {
     try {
-        this.applePaySession.abort();
+        this.applePay.session.abort();
     } catch (e) {
         // Skip errors if any
     }
 }
 
-XPaymentsWidget.prototype._applePayStart = function(params)
+XPaymentsWidget.prototype._applePayStart = function()
 {
     var request = {
         countryCode: this.config.company.countryCode,
         currencyCode: this.config.order.currency,
-        supportedNetworks: params.supportedNetworks,
-        merchantCapabilities: ['supports3DS'],
+        supportedNetworks: this.applePay.supportedNetworks,
+        merchantCapabilities: this.applePay.merchantCapabilities,
         total: {
             label: this.config.company.name,
             amount: this.config.order.total
@@ -342,9 +348,9 @@ XPaymentsWidget.prototype._applePayStart = function(params)
         }
     }
 
-    this.applePaySession = new ApplePaySession(3, request);
+    this.applePay.session = new ApplePaySession(3, request);
 
-    this.applePaySession.onvalidatemerchant = (function(event) {
+    this.applePay.session.onvalidatemerchant = (function(event) {
         this._sendEvent('applepay.validatemerchant', {
             validationURL: event.validationURL,
             displayName: this.config.company.name,
@@ -352,24 +358,24 @@ XPaymentsWidget.prototype._applePayStart = function(params)
         });
     }).bind(this);
 
-    this.applePaySession.onpaymentauthorized = (function(event) {
+    this.applePay.session.onpaymentauthorized = (function(event) {
         this.trigger('applepay.paymentauthorized', event.payment);
     }).bind(this);
 
-    this.applePaySession.oncancel = (function(event) {
+    this.applePay.session.oncancel = (function(event) {
         this._sendEvent('applepay.cancel');
     }).bind(this);
 
     if (this.config.applePay.checkoutMode) {
-        this.applePaySession.onshippingcontactselected = (function(event) {
+        this.applePay.session.onshippingcontactselected = (function(event) {
             this.trigger('applepay.shippingcontactselected', event.shippingContact);
         }).bind(this);
-        this.applePaySession.onshippingmethodselected = (function(event) {
+        this.applePay.session.onshippingmethodselected = (function(event) {
             this.trigger('applepay.shippingmethodselected', event.shippingMethod);
         }).bind(this);
     }
 
-    this.applePaySession.begin();
+    this.applePay.session.begin();
 
 }
 
@@ -383,15 +389,15 @@ XPaymentsWidget.prototype._parseApplePayNewTotal = function(updateData)
 }
 
 XPaymentsWidget.prototype.completeApplePayShippingContactSelection = function(updateData) {
-    this.applePaySession.completeShippingContactSelection(this._parseApplePayNewTotal(updateData));
+    this.applePay.session.completeShippingContactSelection(this._parseApplePayNewTotal(updateData));
 }
 
 XPaymentsWidget.prototype.completeApplePayShippingMethodSelection = function(updateData) {
-    this.applePaySession.completeShippingMethodSelection(this._parseApplePayNewTotal(updateData));
+    this.applePay.session.completeShippingMethodSelection(this._parseApplePayNewTotal(updateData));
 }
 
 XPaymentsWidget.prototype.completeApplePayPayment = function(updateData) {
-    this.applePaySession.completePayment(updateData);
+    this.applePay.session.completePayment(updateData);
 }
 
 XPaymentsWidget.prototype.succeedApplePayPayment = function(payment) {
@@ -407,15 +413,23 @@ XPaymentsWidget.prototype._isApplePayAvailable = function() {
     return this.config.applePay.enabled && this.isApplePaySupportedByDevice();
 }
 
-XPaymentsWidget.prototype._checkApplePayActiveCard = function(params)
+XPaymentsWidget.prototype._checkApplePayActiveCard = function()
 {
-    var promise = ApplePaySession.canMakePaymentsWithActiveCard(params.merchantId);
+    var promise = ApplePaySession.canMakePaymentsWithActiveCard(this.applePay.merchantId);
     promise.then((function (canMakePayments) {
         if (canMakePayments) {
             this.trigger('applepay.forceselect');
             this._sendEvent('applepay.select');
         }
     }).bind(this));
+}
+
+XPaymentsWidget.prototype._applePayInit = function(params)
+{
+    this.applePay.supportedNetworks = params.supportedNetworks;
+    this.applePay.merchantCapabilities = params.merchantCapabilities;
+    this.applePay.merchantId = params.merchantId;
+    this._checkApplePayActiveCard();
 }
 
 XPaymentsWidget.prototype.showSaveCard = function(value)
@@ -505,8 +519,8 @@ XPaymentsWidget.prototype.messageListener = function(event)
                 this._afterLoad(msg.params);
             } else if ('applepay.start' === eventType) {
                 this._applePayStart(msg.params);
-            } else if ('applepay.checkactivecard' === eventType) {
-                this._checkApplePayActiveCard(msg.params);
+            } else if ('applepay.init' === eventType) {
+                this._applePayInit(msg.params);
             } else if ('applepay.merchantvalidated' === eventType) {
                 this._applePayValidated(msg.params);
             } else if ('applepay.completed' === eventType) {
