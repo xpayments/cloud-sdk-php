@@ -19,7 +19,7 @@ require_once __DIR__ . DIRECTORY_SEPARATOR . 'Model' . DIRECTORY_SEPARATOR . 'Su
 
 class Client
 {
-    const SDK_VERSION = '0.2.11';
+    const SDK_VERSION = '0.2.12';
 
     private $account;
     private $secretKey;
@@ -432,23 +432,25 @@ class Client
     }
 
     /**
-     * Change Apple Pay status
+     * Change wallet status
      *
-     * @param bool $status
+     * @param string $walletId Wallet public ID (same as in JS)
+     * @param bool $status Send True to enable, false to disable
      *
      * @return Response
      * @throws ApiException
      */
-    public function doSetApplePayStatus($status)
+    public function doSetWalletStatus($walletId, $status)
     {
         $request = new Request($this->account, $this->apiKey, $this->secretKey);
 
         $params = array(
+            'walletId' => $walletId,
             'status' => $status
         );
 
         $response = $request->send(
-            'set_apple_pay_status',
+            'set_wallet_status',
             $params,
             'config'
         );

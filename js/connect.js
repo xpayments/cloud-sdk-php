@@ -3,6 +3,7 @@
  */
 
 function XPaymentsConnect(elmSelector, quickAccessKey, handlers) {
+    this.jsApiVersion = '2.0';
     this.serverDomain = 'xpayments.com';
     this.messageNamespace = 'xpayments.connect.';
 
@@ -102,7 +103,7 @@ XPaymentsConnect.prototype.getRedirectUrl = function()
     return 'https://' + this.getServerHost() + '/' +
         '?ref=' + encodeURIComponent(this.config.referrerUrl) +
         '&account=' + encodeURIComponent(this.config.account) +
-        '&apple_pay=' + (this.config.applePayOnly ? 'Y' : 'N') +
+        '&api_version=' + encodeURIComponent(this.jsApiVersion) +
         '&quickaccess=' + encodeURIComponent(this.config.quickAccessKey);
 }
 

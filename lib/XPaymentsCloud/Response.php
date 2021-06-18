@@ -51,6 +51,10 @@ class Response
         $signatureLocal = Signature::get($action, $body, $secretKey);
         $fields = $this->convertJSONToHash($body);
 
+        if (500 === $httpCode) {
+            throw new ApiException('Server returned error: ' . $body, $httpCode);
+        }
+
         if (
             0 !== strcmp($signatureLocal, $signature)
             || empty($fields)
