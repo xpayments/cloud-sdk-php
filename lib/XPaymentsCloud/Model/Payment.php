@@ -108,4 +108,13 @@ class Payment
         return in_array($txnCode, $this->supportedTransactions);
     }
 
+    /**
+     * Returns true if payment is not failed
+     *
+     * @return bool
+     */
+    public function isSuccessfulStatus()
+    {
+        return !in_array($this->status, [self::INITIALIZED, self::DECLINED]);
+    }
 }

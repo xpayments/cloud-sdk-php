@@ -19,7 +19,7 @@ require_once __DIR__ . DIRECTORY_SEPARATOR . 'Model' . DIRECTORY_SEPARATOR . 'Su
 
 class Client
 {
-    const SDK_VERSION = '0.2.12';
+    const SDK_VERSION = '0.2.11';
 
     private $account;
     private $secretKey;
@@ -259,7 +259,7 @@ class Client
      * and cards saved by switched off payment configuration
      *
      * @param string $customerId Public Customer ID
-     * @param string $status Cards status 
+     * @param string $status Cards status
      *
      * @return Response
      *
@@ -382,7 +382,7 @@ class Client
     }
 
     /**
-     * Get payment configurations 
+     * Get payment configurations
      *
      * @return Response
      * @throws ApiException
@@ -407,7 +407,7 @@ class Client
     }
 
     /**
-     * Get wallets 
+     * Get wallets
      *
      * @return Response
      * @throws ApiException
@@ -540,6 +540,42 @@ class Client
         );
 
         if (is_null($response)) {
+            throw new ApiException('Invalid response');
+        }
+
+        return $response;
+    }
+
+    /**
+     * Create subscriptions using saved card id
+     *
+     * @param array  $subscriptionPlans
+     * @param string $customerId
+     * @param string $xpid
+     * @param string $savedCardId
+     *
+     * @return Response
+     *
+     * @throws ApiException
+     */
+    public function doCreateSubscriptions(array $subscriptionPlans, string $customerId, string $xpid, string $savedCardId = ''): Response
+    {
+        $request = new Request($this->account, $this->apiKey, $this->secretKey);
+
+        $params = [
+            'subscriptionPlans' => $subscriptionPlans,
+            'customerId'        => $customerId,
+            'xpid'              => $xpid,
+            'savedCardId'       => $savedCardId,
+        ];
+
+        $response = $request->send(
+            'create_subscriptions',
+            $params,
+            'subscription'
+        );
+
+        if (is_null($response->getSubscriptions())) {
             throw new ApiException('Invalid response');
         }
 
