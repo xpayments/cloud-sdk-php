@@ -19,7 +19,7 @@ require_once __DIR__ . DIRECTORY_SEPARATOR . 'Model' . DIRECTORY_SEPARATOR . 'Su
 
 class Client
 {
-    const SDK_VERSION = '0.2.13';
+    const SDK_VERSION = '0.2.14';
 
     private $account;
     private $secretKey;
@@ -583,6 +583,134 @@ class Client
     }
 
     /**
+     * Add bulk operation
+     *
+     * @param string $operation
+     * @param array $xpids
+     *
+     * @return Response
+     */
+    public function doAddBulkOperation($operation, array $xpids = array())
+    {
+        $request = new Request($this->account, $this->apiKey, $this->secretKey);
+
+        $params = array(
+            'operation'    => $operation,
+            'payments' => array(),
+        );
+
+        foreach ($xpids as $xpid) {
+            $params['payments'][] = array(
+                'xpid' => $xpid
+            );
+        }
+
+        $response = $request->send(
+            'add',
+            $params,
+            'bulk_operation'
+        );
+
+        return $response;
+    }
+
+    /**
+     * Delete bulk operation
+     *
+     * @param string $batchId
+     *
+     * @return Response
+     */
+    public function doDeleteBulkOperation($batchId)
+    {
+        $request = new Request($this->account, $this->apiKey, $this->secretKey);
+
+        $params = array(
+            'batch_id' => $batchId,
+        );
+
+        $response = $request->send(
+            'delete',
+            $params,
+            'bulk_operation'
+        );
+
+        return $response;
+    }
+
+    /**
+     * Get bulk operation
+     *
+     * @param string $batchId
+     *
+     * @return Response
+     */
+    public function doGetBulkOperation($batchId)
+    {
+        $request = new Request($this->account, $this->apiKey, $this->secretKey);
+
+        $params = array(
+            'batch_id' => $batchId,
+        );
+
+        $response = $request->send(
+            'get',
+            $params,
+            'bulk_operation'
+        );
+
+        return $response;
+    }
+
+    /**
+     * Start bulk operation
+     *
+     * @param string $batchId
+     *
+     * @return Response
+     */
+    public function doStartBulkOperation($batchId)
+    {
+        $request = new Request($this->account, $this->apiKey, $this->secretKey);
+
+        $params = array(
+            'batch_id' => $batchId,
+        );
+
+        $response = $request->send(
+            'start',
+            $params,
+            'bulk_operation'
+        );
+
+        return $response;
+    }
+
+    /**
+     * Stop bulk operation
+     *
+     * @param string $batchId
+     *
+     * @return Response
+     */
+    public function doStopBulkOperation($batchId)
+    {
+        $request = new Request($this->account, $this->apiKey, $this->secretKey);
+
+        $params = array(
+            'batch_id' => $batchId,
+        );
+
+        $response = $request->send(
+            'stop',
+            $params,
+            'bulk_operation'
+        );
+
+        return $response;
+    }
+
+    /**
      * @param null $inputData
      * @param null $signature
      *
@@ -613,11 +741,11 @@ class Client
     }
 
     /**
-     * Get X-Payments admin URL
+     * Get X-Payments web location
      *
      * @return string
      */
-    public function getAdminUrl()
+    public function getXpaymentsWebLocation()
     {
         $host = $this->account . '.' . Request::XP_DOMAIN;
 
@@ -625,7 +753,27 @@ class Client
             $host = constant('XPAYMENTS_SDK_DEBUG_SERVER_HOST');
         }
 
-        return 'https://' . $host . '/admin.php';
+        return sprintf('https://%s/', $host);
+    }
+
+    /**
+     * Get X-Payments admin URL
+     *
+     * @return string
+     */
+    public function getAdminUrl()
+    {
+        return $this->getXpaymentsWebLocation() . 'admin.php';
+    }
+
+    /**
+     * Get X-Payments payment URL
+     *
+     * @return string
+     */
+    public function getPaymentUrl()
+    {
+        return $this->getXpaymentsWebLocation() . 'payment.php';
     }
 
     /**
