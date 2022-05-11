@@ -409,6 +409,7 @@ XPaymentsWidget.prototype._applePayStart = function()
             params.error = event.sessionError;
         }
         this._sendEvent('applepay.cancel', params);
+        this.trigger('applepay.cancel', params);
     }).bind(this);
 
     if (this.config.walletMode) {
@@ -670,6 +671,7 @@ XPaymentsWidget.prototype._googlePayStart = function(params)
         }).bind(this))
         .catch((function(err) {
             this._sendEvent('googlepay.cancel', { error: err });
+            this.trigger('googlepay.cancel');
         }).bind(this));
 }
 
