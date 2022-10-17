@@ -11,7 +11,7 @@ namespace XPaymentsCloud;
 class Request
 {
     const XP_DOMAIN = 'xpayments.com';
-    const API_VERSION = '4.7';
+    const API_VERSION = '4.8';
 
     private $connectionTimeout = 120;
 
