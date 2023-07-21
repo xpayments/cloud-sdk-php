@@ -711,32 +711,6 @@ class Client
     }
 
     /**
-     * Export payments
-     *
-     * @param array $params
-     *
-     * @return Response
-     */
-    public function doExportPayments($params)
-    {
-        $request = new Request($this->account, $this->apiKey, $this->secretKey);
-
-        $params = array();
-
-        $response = $request->send(
-            'payments',
-            $params,
-            'export',
-        );
-
-        if (is_null($response)) {
-            throw new ApiException('Invalid response');
-        }
-
-        return $response;
-    }
-
-    /**
      * @param null $inputData
      * @param null $signature
      *
