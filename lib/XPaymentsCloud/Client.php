@@ -19,7 +19,7 @@ require_once __DIR__ . DIRECTORY_SEPARATOR . 'Model' . DIRECTORY_SEPARATOR . 'Su
 
 class Client
 {
-    const SDK_VERSION = '0.2.14';
+    const SDK_VERSION = '0.3.0';
 
     private $account;
     private $secretKey;
