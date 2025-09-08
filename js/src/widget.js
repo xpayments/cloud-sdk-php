@@ -2,7 +2,7 @@
  * X-Payments Cloud SDK - Payment Widget
  */
 
-window.XPaymentsWidget = function()
+const XPaymentsWidget = function()
 {
     this.jsApiVersion = '2.0';
     this.serverDomain = 'xpayments.com';
@@ -919,3 +919,5 @@ XPaymentsWidget.prototype._postMessage = function(message)
         this._log('Error sending message - iframe wasn\'t initialized!');
     }
 }
+
+export default XPaymentsWidget

@@ -17,7 +17,7 @@ function XPaymentsConnect(elmSelector, quickAccessKey, handlers) {
         referrerUrl: document.location.href,
         applePayOnly: false,
         quickAccessKey: ''
-    }
+    };
 
     this.handlers = {};
 
@@ -44,22 +44,22 @@ XPaymentsConnect.prototype.init = function(settings)
     window.addEventListener('message', this.bindedListener);
 
     return this;
-}
+};
 
 XPaymentsConnect.prototype.getContainerElm = function()
 {
     return this.safeQuerySelector(this.config.container);
-}
+};
 
 XPaymentsConnect.prototype.getIframeId = function()
 {
     return 'xpayments-connect';
-}
+};
 
 XPaymentsConnect.prototype.getIframeElm = function()
 {
     return document.getElementById(this.getIframeId());
-}
+};
 
 XPaymentsConnect.prototype.safeQuerySelector = function(selector)
 {
@@ -68,7 +68,7 @@ XPaymentsConnect.prototype.safeQuerySelector = function(selector)
         elm = document.querySelector(selector);
     }
     return elm;
-}
+};
 
 XPaymentsConnect.prototype.resize = function(height)
 {
@@ -77,7 +77,7 @@ XPaymentsConnect.prototype.resize = function(height)
         this.previousHeight = elm.style.height;
         elm.style.height = height + 'px';
     }
-}
+};
 
 XPaymentsConnect.prototype.load = function()
 {
@@ -91,12 +91,12 @@ XPaymentsConnect.prototype.load = function()
     elm.style.width = '100%';
     elm.style.height = '0';
     elm.style.overflow = 'hidden';
-    elm.setAttribute('scrolling', 'no')
+    elm.setAttribute('scrolling', 'no');
     containerElm.appendChild(elm);
 
     elm.src = this.getRedirectUrl();
 
-}
+};
 
 XPaymentsConnect.prototype.getRedirectUrl = function()
 {
@@ -105,13 +105,13 @@ XPaymentsConnect.prototype.getRedirectUrl = function()
         '&account=' + encodeURIComponent(this.config.account) +
         '&api_version=' + encodeURIComponent(this.jsApiVersion) +
         '&quickaccess=' + encodeURIComponent(this.config.quickAccessKey);
-}
+};
 
 XPaymentsConnect.prototype.on = function(event, handler)
 {
     this.handlers[event] = handler.bind(this);
     return this;
-}
+};
 
 XPaymentsConnect.prototype.trigger = function(event, params)
 {
@@ -119,12 +119,12 @@ XPaymentsConnect.prototype.trigger = function(event, params)
         this.handlers[event](params);
     }
     return this;
-}
+};
 
 XPaymentsConnect.prototype.getServerHost = function()
 {
     return 'connect.' + this.serverDomain;
-}
+};
 
 XPaymentsConnect.prototype.messageListener = function(event)
 {
@@ -161,7 +161,7 @@ XPaymentsConnect.prototype.messageListener = function(event)
             this.trigger(eventType, msg.params);
         }
     }
-}
+};
 
 XPaymentsConnect.prototype.postMessage = function(message)
 {
@@ -177,10 +177,12 @@ XPaymentsConnect.prototype.postMessage = function(message)
     } else {
         this.log('Error sending message - iframe wasn\'t initialized!');
     }
-}
+};
 
 XPaymentsConnect.prototype.log = function(msg) {
     if (this.config.debug) {
         console.log(msg);
     }
-}
+};
+
+export { XPaymentsConnect as default };

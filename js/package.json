@@ -1,0 +1,28 @@
+{
+  "name": "cloud-sdk-js",
+  "version": "0.3.0",
+  "description": "X-PAYMENTS CLOUD API",
+  "type": "module",
+  "scripts": {
+    "build": "rollup -c",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xpayments/cloud-sdk-php.git"
+  },
+  "keywords": [
+    "xpayments",
+    "xcart"
+  ],
+  "author": "xpayments",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/xpayments/cloud-sdk-php/issues"
+  },
+  "homepage": "https://github.com/xpayments/cloud-sdk-php#readme",
+  "devDependencies": {
+    "@rollup/plugin-terser": "^0.4.4",
+    "rollup": "^4.5.0"
+  }
+}
