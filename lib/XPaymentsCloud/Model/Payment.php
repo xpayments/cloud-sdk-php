@@ -2,7 +2,7 @@
 // vim: set ts=4 sw=4 sts=4 et:
 
 /**
- * Copyright (c) 2011-present Qualiteam software Ltd. All rights reserved.
+ * Copyright (c) 2011-present X-Cart Holdings LLC. All rights reserved.
  * See https://www.x-cart.com/license-agreement.html for license details.
  */
 
@@ -20,6 +20,10 @@ class Payment
     public $amount;
     public $currency;
     public $isFraudulent;
+    public $referenceId;
+    /**
+     * Same value as $referenceId, kept for backward compatibility
+     */
     public $refId;
     public $initialTransactionId;
     public $description;
@@ -54,6 +58,7 @@ class Payment
     const CHARGED       = 4;
     const REFUNDED      = 5;
     const PART_REFUNDED = 6;
+    const UPCOMING      = 7;
 
     /**
      * Transaction types
@@ -93,6 +98,11 @@ class Payment
             if (property_exists($this, $key)) {
                 $this->{$key} = $paymentData[$key];
             }
+        }
+
+        // The API returns the reference as referenceId; older code reads $refId
+        if (is_null($this->refId)) {
+            $this->refId = $this->referenceId;
         }
 
         return $this;

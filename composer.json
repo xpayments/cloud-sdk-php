@@ -2,7 +2,7 @@
     "name": "xpayments/cloud-sdk-php",
     "type": "library",
     "description": "X-Payments Cloud PHP SDK",
-    "license": "MIT",
+    "license": "proprietary",
     "authors": [
         {
             "name": "X-Payments",
@@ -13,6 +13,7 @@
         "php": "~7.1.3||~7.2.0||~7.3.0||~7.4.0||^8.0",
         "ext-curl": "*",
         "ext-hash": "*",
+        "ext-json": "*",
         "ext-openssl": "*"
     },
     "autoload": {

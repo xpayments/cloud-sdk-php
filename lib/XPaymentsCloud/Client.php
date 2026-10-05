@@ -2,7 +2,7 @@
 // vim: set ts=4 sw=4 sts=4 et:
 
 /**
- * Copyright (c) 2011-present Qualiteam software Ltd. All rights reserved.
+ * Copyright (c) 2011-present X-Cart Holdings LLC. All rights reserved.
  * See https://www.x-cart.com/license-agreement.html for license details.
  */
 
@@ -36,7 +36,7 @@ class Client
      * @param string $callbackUrl
      *
      * @param null $forceSaveCard (optional)
-     * @param null $forceTransactionType (optional)
+     * @param null $forceTransactionType (optional) Deprecated, not supported by the API
      * @param int $forceConfId (optional)
      *
      * @return Response
@@ -155,12 +155,26 @@ class Client
 
     /**
      * @param $xpid
+     * @param bool $refresh Ask the payment gateway for the current payment state first
+     *                      (only when the gateway supports it)
      * @return Response
      * @throws ApiException
      */
-    public function doGetInfo($xpid)
+    public function doGetInfo($xpid, $refresh = false)
     {
-        return $this->doAction('get_info', $xpid);
+        return $this->doAction('get_info', $xpid, 0, $refresh ? array('refresh' => 1) : array());
+    }
+
+    /**
+     * Refresh payment state and details by requesting them from the payment gateway
+     *
+     * @param $xpid
+     * @return Response
+     * @throws ApiException
+     */
+    public function doRefresh($xpid)
+    {
+        return $this->doAction('refresh', $xpid);
     }
 
     /**
@@ -227,16 +241,17 @@ class Client
      * @param $action
      * @param $xpid
      * @param int $amount
+     * @param array $extraParams
      * @return Response
      * @throws ApiException
      */
-    private function doAction($action, $xpid, $amount = 0)
+    private function doAction($action, $xpid, $amount = 0, array $extraParams = array())
     {
         $request = new Request($this->account, $this->apiKey, $this->secretKey);
 
         $params = array(
             'xpid' => $xpid,
-        );
+        ) + $extraParams;
 
         if (0 < $amount) {
             $params['amount'] = $amount;
@@ -495,7 +510,7 @@ class Client
      * Update subscription
      *
      * @param string  $subscriptionPublicId
-     * @param array  $updateParams
+     * @param array  $updateParams Any of: cardId, recurringAmount, status, refId, paymentCallbackUrl
      *
      * @return Response
      *
@@ -706,6 +721,36 @@ class Client
             $params,
             'bulk_operation'
         );
+
+        return $response;
+    }
+
+    /**
+     * Check that the account, API key and secret key work together
+     *
+     * @param string $testCode Any string up to 128 characters; a random one is used when empty
+     *
+     * @return Response
+     *
+     * @throws ApiException
+     */
+    public function doTestConnection($testCode = '')
+    {
+        if ((string)$testCode === '') {
+            $testCode = bin2hex(random_bytes(16));
+        }
+
+        $request = new Request($this->account, $this->apiKey, $this->secretKey);
+
+        $response = $request->send(
+            'test',
+            array('testCode' => (string)$testCode),
+            'connect'
+        );
+
+        if ($response->hashCode !== md5((string)$testCode)) {
+            throw new ApiException('Invalid response');
+        }
 
         return $response;
     }
