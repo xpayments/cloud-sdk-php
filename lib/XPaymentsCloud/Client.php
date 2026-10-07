@@ -155,8 +155,7 @@ class Client
 
     /**
      * @param $xpid
-     * @param bool $refresh Ask the payment gateway for the current payment state first
-     *                      (only when the gateway supports it)
+     * @param bool $refresh Refresh the payment data from the payment gateway first
      * @return Response
      * @throws ApiException
      */

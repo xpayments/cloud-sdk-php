@@ -78,7 +78,6 @@ $address = array(
     'phone'     => '',
     'fax'       => '',
     'company'   => '',
-    'email'     => 'john@example.com',
 );
 
 $cart = array(
@@ -119,10 +118,10 @@ $subscription = $response->getSubscription();    // subscription updates
 | `doCapture($xpid, $amount = 0)` | `payment/capture` (0 means the full amount) |
 | `doVoid($xpid, $amount = 0)` | `payment/void` |
 | `doRefund($xpid, $amount = 0)` | `payment/refund` |
-| `doAccept($xpid)`, `doDecline($xpid)` | `payment/accept`, `payment/decline` (payments held for fraud review) |
+| `doAccept($xpid)`, `doDecline($xpid)` | `payment/accept`, `payment/decline` (payments put on hold, e.g. by fraud screening) |
 | `doGetInfo($xpid, $refresh = false)` | `payment/get_info` |
 | `doRefresh($xpid)` | `payment/refresh` (re-read the payment state from the gateway) |
-| `doRebill()` | `payment/rebill` (charge a saved card again) |
+| `doRebill()` | `payment/rebill` (new payment with the card of an earlier payment) |
 | `doGetCustomerCards()`, `doSetDefaultCustomerCard()`, `doDeleteCustomerCard()` | `customer/get_cards`, `customer/set_default_card`, `customer/delete_card` |
 | `doGetTokenizationSettings()` | `config/get_tokenization_settings` |
 | `doGetPaymentConfs()` | `config/get_payment_configurations` |
@@ -187,7 +186,7 @@ On form submit the widget gets a token for the entered card. It puts the token i
 
 ### Supported payment gateways
 
-X-Payments Cloud supports more than 60 payment gateway integrations: ANZ eGate, American Express Web-Services API Integration, Authorize.Net, Bambora (Beanstream), Beanstream (legacy API), Bendigo Bank, BillriantPay, BluePay, BlueSnap Payment API (XML), Braintree, BluePay Canada (Caledon), Cardinal Commerce Centinel, Chase Paymentech, CommWeb - Commonwealth Bank, BAC Credomatic, CyberSource - SOAP Toolkit API, X-Payments Demo Pay, X-Payments Demo Pay 3-D Secure, DIBS, DirectOne - Direct Interface, eProcessing Network - Transparent Database Engine, SecurePay Australia, Moneris eSELECTplus, Elavon (Realex API), ePDQ MPI XML (Phased out), eWAY Rapid - Direct Connection, eWay Realtime Payments XML, Sparrow (5th Dimension Gateway), First Data Payeezy Gateway (ex- Global Gateway e4), Global Iris, Global Payments, GoEmerchant - XML Gateway API, HeidelPay, Innovative Gateway, iTransact XML, Payment XP (Meritus) Web Host, NAB - National Australia Bank, NMI (Network Merchants Inc.), Netbilling - Direct Mode, Netevia, Ingenico ePayments (Ogone e-Commerce), PayGate South Africa, Payflow Pro, PayPal REST API, PayPal Payments Pro (PayPal API), PayPal Payments Pro (Payflow API), PSiGate XML API, QuantumGateway - XML Requester, Intuit QuickBooks Payments, QuickPay, Worldpay Corporate Gateway - Direct Model, Global Payments (ex. Realex), Opayo Direct (ex. Sage Pay Go - Direct Interface), Paya (ex. Sage Payments US), Simplify Commerce by MasterCard, SkipJack, Suncorp, TranSafe, powered by Monetra, 2Checkout, USA ePay - Transaction Gateway API, Elavon Converge (ex VirtualMerchant), WebXpress, Worldpay Total US, Worldpay US (Lynk Systems).
+X-Payments Cloud supports more than 50 payment gateway integrations, including: American Express Web-Services API Integration, Authorize.Net, Bambora (Beanstream), Bendigo Bank, BluePay, BlueSnap Payment API (XML), Braintree, BluePay Canada (Caledon), Cardinal Commerce Centinel, Chase Paymentech, BAC Credomatic, CyberSource - SOAP Toolkit API, X-Payments Demo Pay, X-Payments Demo Pay 3-D Secure, DIBS, DirectOne - Direct Interface, eProcessing Network - Transparent Database Engine, SecurePay Australia, Moneris eSELECTplus, eWAY Rapid - Direct Connection, Sparrow (5th Dimension Gateway), Global Payments, GoEmerchant - XML Gateway API, HeidelPay, Innovative Gateway, iTransact XML, Payment XP (Meritus) Web Host, NAB - National Australia Bank, NMI (Network Merchants Inc.), Netbilling - Direct Mode, Netevia, Ingenico ePayments (Ogone e-Commerce), PayGate South Africa, PayPal REST API, PSiGate XML API, QuantumGateway - XML Requester, Intuit QuickBooks Payments, QuickPay, Worldpay Corporate Gateway - Direct Model, Opayo Direct (ex. Sage Pay Go - Direct Interface), Paya (ex. Sage Payments US), Simplify Commerce by MasterCard, SkipJack, Stripe, TranSafe, powered by Monetra, 2Checkout, USA ePay - Transaction Gateway API, Elavon Converge (ex VirtualMerchant), WebXpress, Worldpay Total US, Worldpay US (Lynk Systems).
 
 ### Supported fraud-screening services
 
